@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Simple Qlik Mashup</title>
+    <style>
+        button {
+            padding: 3px;
+            width: 150px;
+        }
+    </style>
+    <script>
+
+var ifrm;
+
+function getQlikCookies(){
+    ifrm = document.createElement('iframe');
+    document.getElementById('results').appendChild(ifrm);
+    ifrm.width=80;
+    ifrm.height=80;
+    ifrm.frameBorder=0;
+    //ifrm.style.display = 'none';
+    ifrm.src = 'http://qmi-qs-sn/anonym/extensions/testjwt/testjwt.html?jwt=eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJqd3RfZmFuIiwidXNlckRpcmVjdG9yeSI6IkpXVC5JTyJ9.QJ_gNJx_TUnWn6i6iMz0G9dhqv6DZyzpGT0CyG9-kPj4WaYRY8HOhQGG88E-M9siN5siJ3wBXvTTPgDG-ryx1fZYbvFHlwC8nTpafZ9XHacse6z-xiNnNFe_fGJiMHvGKXoCtFkDLmVQAdythybRlE1KTxSjXyS9as9D3qD9BmHb-dbnYy2FW9zS020zODf_FOyBDyOaYxHShsFJHldCM2e8LnVZH3OdSPFyMnatuOcp99AyQHUoJszzY1JtHuykudsNJP6IKTS5kXNMspOzSvSsanqwXbDAmefCRe774yXnU0y0AniZeusD_-yZ7nzTAwg6BbrFHTZWB6N6nvcT1Q';
+    //ifrm.parentNode.removeChild(ifrm);
+}
+
+function doesItWork(){
+    var img = document.createElement('img');
+    img.src = "http://qmi-qs-sn/jwt/appcontent/cca3135a-c0f0-4651-aacf-374710bc1171/Bild1.png?rnd=" + Math.random();
+    img.style = 'padding:3px;';
+    document.getElementById('results').appendChild(img);
+}
+
+function removeIfrm(){
+    ifrm.parentNode.removeChild(ifrm);
+}
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>Hello Qlik Mashup World</h1>
+        <p><button onclick="getQlikCookies();">Get Cookies</button> Adds a hidden iframe to the DOM model.</p>
+        <p><button onclick="doesItWork();">Does it Work?</button> Get image, which is an app attachment, into a &lt;img&gt; tag.</p>
+        <p><button onclick="removeIfrm();">Close Iframe</button></p>
+        <a href="http://qmi-qs-sn/jwt/hub" target="_blank">Go to hub</a>
+        <hr/>
+        <div id="txt"></div>
+        <div id="results"></div>
+    </div>
+    <img/>
+</body>
+</html>
