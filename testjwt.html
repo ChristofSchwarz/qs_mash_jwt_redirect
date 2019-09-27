@@ -1,0 +1,62 @@
+<!doctype html>
+<html>
+<head>
+  <title>Qlik Sense Mashup</title>
+  <meta charset="utf-8">
+</head>
+<body style="overflow: auto">
+  <div id="container"></div>
+  <script>
+	
+const server = 'qmi-qs-sn';
+const jwt_vproxy = 'jwt';
+/*
+This page is to redirect to a JWT virtual-proxy. In order to open it, you 
+need to call it with the JWT token in the query-string (not http-header) like 
+this .../extensions/testjwt/testjwt.html?jwt=<yourtoken>&target=<redirect_url>
+if target is not provided, you will just see the favicon of Qlik Sense.
+target can be a relative-url like /sense/app/<appid>/sheet/<sheetid> 
+It contacts the
+*/
+console.log('running qlik mashup testjwt.html ...');
+
+var protocol = document.location.protocol.replace(':','');
+var defaultTarget = protocol + '://' + server + '/' + jwt_vproxy + '/content/default/folder.gif';
+// '/resources/favicon.ico';
+var querystring = document.location.search;
+querystring = querystring.substring(querystring.indexOf('?')+1).split('&');
+var params = {}, pair, d = decodeURIComponent;
+// march and parse querystrings into an object
+for (var i = querystring.length - 1; i >= 0; i--) {
+	pair = querystring[i].split('=');
+	params[d(pair[0])] = d(pair[1] || '');
+}
+var xhr = new XMLHttpRequest();
+var jwt = params.jwt;
+var target = params.target || defaultTarget;
+
+if (!jwt || !target) {
+	document.getElementById('container').innerText = 'jwt must be provided.';
+} else {
+	document.getElementById('container').innerHTML = 'Redirecting to <a href="' + defaultTarget 
+	+ '">' + defaultTarget + '</a>';
+	xhr.open('GET', defaultTarget);
+	xhr.onreadystatechange = handler;
+	xhr.setRequestHeader('Authorization', 'Bearer ' + jwt);
+	xhr.setRequestHeader('Access-Control-Allow-Origin', '*');
+	xhr.send();
+}
+
+function handler() {
+  if (this.readyState === this.DONE) {
+	console.log('Response is ' + this.status);
+	if (this.status === 200) {
+	  window.location = target;
+	} else {
+	  console.error('no html :(');
+	}
+  }
+}	
+  </script>  
+</body>
+</html>
