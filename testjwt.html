@@ -1,41 +1,45 @@
 <!doctype html>
 <html>
 <head>
-  <title>Qlik Sense Mashup</title>
+  <title>Qlik Sense Redirection Mashup</title>
   <meta charset="utf-8">
 </head>
 <body style="overflow: auto">
   <div id="container"></div>
   <script>
-	
-const server = 'qmi-qs-sn';
-const jwt_vproxy = 'jwt';
 /*
-This page is to redirect to a JWT virtual-proxy. In order to open it, you 
-need to call it with the JWT token in the query-string (not http-header) like 
-this .../extensions/testjwt/testjwt.html?jwt=<yourtoken>&target=<redirect_url>
-if target is not provided, you will just see the favicon of Qlik Sense.
-target can be a relative-url like /sense/app/<appid>/sheet/<sheetid> 
-It contacts the
-*/
-console.log('running qlik mashup testjwt.html ...');
+This page is to redirect to a JWT virtual-proxy. In order to open it, you can 
+specify 2 query-string parameters "jwt" and "target" like this
 
-var protocol = document.location.protocol.replace(':','');
-var defaultTarget = protocol + '://' + server + '/' + jwt_vproxy + '/content/default/folder.gif';
-// '/resources/favicon.ico';
+http://.../extensions/redirect/redirect.html?jwt=<yourtoken>&target=<redirect_url>
+
+if jwt is not provided you can set a constant of a token below to be used instead
+if target is not provided, you will just see the a folder icon of Qlik Sense.
+(target can be a relative-url like /sense/app/<appid>/sheet/<sheetid>)
+
+*/
+
+// if you want to open the target using a specific user (token needed) then set defaultToken to the token
+// if not, set defaultToken to null and provide the token in the querystring
+const defaultToken = 'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJqd3RfZmFuIiwidXNlckRpcmVjdG9yeSI6IkpXVC5JTyJ9.QJ_gNJx_TUnWn6i6iMz0G9dhqv6DZyzpGT0CyG9-kPj4WaYRY8HOhQGG88E-M9siN5siJ3wBXvTTPgDG-ryx1fZYbvFHlwC8nTpafZ9XHacse6z-xiNnNFe_fGJiMHvGKXoCtFkDLmVQAdythybRlE1KTxSjXyS9as9D3qD9BmHb-dbnYy2FW9zS020zODf_FOyBDyOaYxHShsFJHldCM2e8LnVZH3OdSPFyMnatuOcp99AyQHUoJszzY1JtHuykudsNJP6IKTS5kXNMspOzSvSsanqwXbDAmefCRe774yXnU0y0AniZeusD_-yZ7nzTAwg6BbrFHTZWB6N6nvcT1Q';
+//const defaultToken = null;
+const jwt_vproxy = 'jwt';
+
+console.log('running Qlik Sense mashup redir.html ...');
+var defaultTarget = '/' + jwt_vproxy + '/content/default/folder.gif';
 var querystring = document.location.search;
+// split the querystring params into an object
 querystring = querystring.substring(querystring.indexOf('?')+1).split('&');
 var params = {}, pair, d = decodeURIComponent;
-// march and parse querystrings into an object
 for (var i = querystring.length - 1; i >= 0; i--) {
 	pair = querystring[i].split('=');
 	params[d(pair[0])] = d(pair[1] || '');
 }
 var xhr = new XMLHttpRequest();
-var jwt = params.jwt;
+var jwt = params.jwt || defaultToken;
 var target = params.target || defaultTarget;
 
-if (!jwt || !target) {
+if (!jwt) {
 	document.getElementById('container').innerText = 'jwt must be provided.';
 } else {
 	document.getElementById('container').innerHTML = 'Redirecting to <a href="' + defaultTarget 
